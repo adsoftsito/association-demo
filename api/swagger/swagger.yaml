@@ -1,0 +1,189 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Hello World App
+# during dev, should point to your local machine
+host: localhost:10010
+# basePath prefixes all resource paths 
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+paths:
+ 
+  /company:
+    x-swagger-router-controller: company.controller
+    get:
+      tags:
+      - company
+      description: "Obtiene la lista de viajes"
+      operationId: "companyList"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/CompanyBranch"
+        404:
+          description: "Viajes not found"
+
+    post:
+      tags:
+      - company
+      description: "inserta company con branches"
+      operationId: "addWithBranchs"
+      produces:
+      - "application/json"
+      parameters:
+        - in: body
+
+          name: mycompany
+          description: Viaje object that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/CompanyBranch'
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/CompanyBranch'
+        '400':
+          description: Invalid Company
+            
+
+  /roles:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: role
+    get:
+      description: Returns 'Hello' to the caller
+      # used as the method name of the controller
+      operationId: list
+
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetRoleListResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+    
+    post:
+      description: add a new game system to the list
+      operationId: add
+      parameters:
+        - in: body
+          name: role
+          description: The Game System to create.
+          schema:
+            $ref: "#/definitions/Role"
+      responses:
+        "201":
+          description: Success
+          schema:
+            $ref: "#/definitions/GetRoleResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+
+  /swagger:
+    x-swagger-pipe: swagger_raw
+# complex objects have schema definitions
+definitions:
+ 
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+
+  Role:
+    type: object
+    properties:
+      role_name:
+        type: string
+        description: Name of the Game System
+    required:
+      - role_name
+
+  GetRoleResponse:
+    type: object
+    properties:
+      id:
+        type: number
+        description: identifier
+      role_name:
+        type: string
+        description: Name of the Game System
+    required:
+      - role_name
+
+  GetRoleListResponse:
+    required:
+      - gamesystems
+    properties:
+      gamesystems:
+        type: array
+        items:
+          $ref: "#/definitions/GetRoleResponse"
+          
+  CompanyBranch:
+    required:
+      - company
+      - branchdetail
+    properties:
+    
+      company:
+        $ref: "#/definitions/Company"
+      branchdetail:
+        type: array
+        items:
+          $ref: "#/definitions/Branch"
+          
+  Company:
+    type: object
+    properties:
+      company_name:
+        type: string
+        description: Name of the Game System
+      company_address:
+        type: string
+        description: Name of the Game System
+      company_city:
+        type: string
+        description: Name of the Game System
+
+
+    required:
+      - company_name
+
+  Branch:
+    type: object
+    properties:
+      branch_id:
+        type: string
+        description: Name of the Game System
+      branch_name:
+        type: string
+        description: Name of the Game System
+      branch_address:
+        type: string
+        description: Name of the Game System
+      branch_city:
+        type: string
+        description: Name of the Game System
+    required:
+      - branch_name
+          
